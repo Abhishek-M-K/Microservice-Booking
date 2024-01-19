@@ -21,6 +21,16 @@ module.exports = (sequelize, DataTypes) => {
         values: ["pending", "confirmed", "cancelled"],
         defaultValue: "pending",
       },
+      numberOfSeats: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      bookingCost: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
