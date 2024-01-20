@@ -13,9 +13,9 @@ class BookingService {
     //data -> flightId, userId, num of seats
     try {
       const flightId = data.flightId;
-      let flightUrl = `${FLIGHT_API_URL}/api/v1/flights/${flightId}`;
+      const flightUrl = `${FLIGHT_API_URL}/api/v1/flights/${flightId}`;
       const flight = await axios.get(flightUrl);
-      let flightData = flight.data.data;
+      const flightData = flight.data.data;
       let priceOfFlight = flightData.flightFare;
       if (data.numberOfSeats > flightData.totalSeats) {
         throw new ServiceError(
@@ -26,14 +26,21 @@ class BookingService {
         );
       }
 
-      const totalCost = priceOfFlight * data.numberOfSeats;
+      const bookingCost = priceOfFlight * data.numberOfSeats;
       const bookingPayload = {
         ...data,
-        totalCost,
+        bookingCost,
       };
 
       const booking = await this.bookingRepository.create(bookingPayload);
-      return booking;
+      const updateFlightUrl = `${FLIGHT_API_URL}/api/v1/flights/${booking.flightId}`;
+      await axios.patch(updateFlightUrl, {
+        totalSeats: flightData.totalSeats - booking.numberOfSeats,
+      });
+      const finalBooking = await this.bookingRepository.update(booking.id, {
+        status: "confirmed",
+      });
+      return finalBooking;
 
       /* return flight.data;
          return flight.data.data;
