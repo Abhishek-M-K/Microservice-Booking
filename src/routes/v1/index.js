@@ -7,6 +7,9 @@ const { BookingController } = require("../../controllers/index");
 const bookingControllerInstance = new BookingController();
 const router = express.Router();
 
+router.get("/sample", (req, res) => {
+  return res.json({ message: "API Gateway testing" });
+});
 router.post("/bookings", bookingControllerInstance.create);
 router.post("/publish", bookingControllerInstance.sendToQueue);
 
